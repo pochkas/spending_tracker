@@ -1,10 +1,13 @@
-package model;
+package org.example.model;
 
-import java.time.LocalDate;
+
+
+
 import java.time.LocalDateTime;
 
 
 public class Expense {
+
 
     private Long id;
 
