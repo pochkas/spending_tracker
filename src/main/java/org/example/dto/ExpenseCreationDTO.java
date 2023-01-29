@@ -1,32 +1,18 @@
 package org.example.dto;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import org.example.model.ExpenseCategory;
 
 import java.time.LocalDateTime;
 
-
-public class ExpenseDTO {
+public class ExpenseCreationDTO {
 
     private ExpenseCategory categories;
 
     private double price;
 
     private LocalDateTime date;
-
-
-
-    @Override
-    public String toString() {
-        return "ExpenseDTO{" +
-                ", categories=" + categories +
-                ", price=" + price +
-                ", date=" + date +
-                '}';
-    }
-
-
-
 
     public ExpenseCategory getCategories() {
         return categories;
@@ -50,17 +36,5 @@ public class ExpenseDTO {
 
     public void setDate(LocalDateTime date) {
         this.date = date;
-    }
-
-    public boolean equals(Object o) {
-
-        if (o == null) {
-            return false;
-        }
-        if (!(o instanceof ExpenseDTO)) {
-            return false;
-        }
-        ExpenseDTO ex = (ExpenseDTO) o;
-        return categories.equals(ex.categories) && (Double.compare(getPrice(), ex.getPrice())==0) && getDate().equals(ex.getDate());
     }
 }

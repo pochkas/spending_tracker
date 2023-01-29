@@ -3,7 +3,6 @@ package org.example.model;
 
 import jakarta.persistence.*;
 
-
 import java.time.LocalDateTime;
 
 
@@ -22,37 +21,44 @@ public class Expense {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime date;
 
-    public Long getId(){
-        return id;
+    public Expense(ExpenseCategory categories, double price, LocalDateTime date) {
+
+        this.categories = categories;
+        this.price = price;
+        this.date = date;
     }
 
-    public ExpenseCategory getCategories(){
+    public Expense() {
+    }
+
+
+
+    public ExpenseCategory getCategories() {
         return categories;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setId(Long id){
-        this.id=id;
     }
 
     public void setCategories(ExpenseCategory categories) {
         this.categories = categories;
     }
 
+    public double getPrice() {
+        return price;
+    }
+
     public void setPrice(double price) {
         this.price = price;
     }
 
-    public void setDate(LocalDateTime date){
-        this.date=date;
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
     }
 
 
+    public String toString() {
+        return getClass().getSimpleName() + ": " + getCategories() + ", " + getPrice() + ", " + getDate();
+    }
 }
