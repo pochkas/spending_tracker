@@ -28,14 +28,6 @@ public class ExpenseController {
         this.mapper = mapper;
     }
 
-//    @GetMapping
-//    @ResponseBody
-//    public List<ExpenseDTO> getExpense() {
-//        return expenseService.getAll()
-//                .stream()
-//                .map(mapper::toDTO)
-//                .collect(toList());
-//    }
 
     @GetMapping
     public ResponseEntity findAll(@RequestParam(required = false) String fines, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2147483647") int size, @RequestParam(defaultValue = "fineId,asc") String[] sort) {
