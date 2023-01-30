@@ -1,23 +1,24 @@
 package org.example.controller;
 
+import org.example.dto.ExpenseCreationDTO;
 import org.example.dto.ExpenseDTO;
+import org.example.model.Expense;
+import org.example.model.ExpenseCategory;
+import org.example.repository.ExpenseRepository;
 import org.example.service.ExpenseService;
 import org.example.service.Mapper;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping(value = "/expenses")
 public class ExpenseController {
 
 
+    @Autowired
+    ExpenseRepository expenseRepository;
     @Autowired
     private ExpenseService expenseService;
     @Autowired
@@ -41,25 +42,27 @@ public class ExpenseController {
     }
 
     @PostMapping
-    public ResponseEntity addExpense(ExpenseDTO expenseDTO) {
+    public ResponseEntity addExpense(@RequestBody ExpenseCreationDTO expenseDTO) {
         try {
 
-            ExpenseDTO expenseResponse = mapper.addExpense(expenseDTO);
+            Expense expenseResponse = mapper.toExpense(expenseDTO);
+            Long id = expenseService.addExpense(expenseResponse).getId();
 
-            return new ResponseEntity<ExpenseDTO>(expenseResponse, HttpStatus.CREATED);
+            return new ResponseEntity(id, HttpStatus.CREATED);
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error. Expense has not been added");
         }
     }
 
-    @PutMapping()
-    public ResponseEntity update(@RequestBody ExpenseDTO expenseDTO) {
+    @PutMapping
+    public ResponseEntity update(@RequestBody ExpenseCreationDTO expenseDTO) {
         try {
 
-            ExpenseDTO expenseResponse = mapper.update(expenseDTO);
+            Expense expenseResponse = mapper.toExpense(expenseDTO);
+            Long id = expenseService.update(expenseResponse).getId();
 
-            return new ResponseEntity<ExpenseDTO>(expenseResponse, HttpStatus.CREATED);
+            return new ResponseEntity(id, HttpStatus.CREATED);
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error. Fine has not been updated");
@@ -67,7 +70,7 @@ public class ExpenseController {
 
     }
 
-    @DeleteMapping()
+    @DeleteMapping
     public ResponseEntity delete(@RequestBody Long id) {
         try {
             expenseService.delete(id);
@@ -84,6 +87,16 @@ public class ExpenseController {
     public ResponseEntity getExpense(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(expenseService.getExpense(id));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error. Expense has not been found");
+        }
+
+    }
+
+    @GetMapping(value = "/{expenseCategory}")
+    public ResponseEntity getExpenseByCategories(@PathVariable ExpenseCategory expenseCategory) {
+        try {
+            return ResponseEntity.ok(expenseRepository.findAllByCategories(expenseCategory.toString()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error. Expense has not been found");
         }

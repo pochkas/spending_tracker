@@ -10,10 +10,19 @@ import java.time.LocalDateTime;
 @Table(name = "expenses")
 public class Expense {
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     private ExpenseCategory categories;
 
     private double price;
@@ -59,6 +68,6 @@ public class Expense {
 
 
     public String toString() {
-        return getClass().getSimpleName() + ": " + getCategories() + ", " + getPrice() + ", " + getDate();
+        return getClass().getSimpleName() + ": " +getId()+", "+ getCategories() + ", " + getPrice() + ", " + getDate();
     }
 }

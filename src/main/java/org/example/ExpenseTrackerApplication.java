@@ -2,7 +2,7 @@ package org.example;
 
 import org.example.model.Expense;
 import org.example.model.ExpenseCategory;
-import org.example.convertertoDB.CategoriesAndPriceInterface;
+import org.example.converters.CategoriesAndPrice;
 import org.example.repository.ExpenseRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,8 @@ import org.springframework.context.annotation.Bean;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.example.model.ExpenseCategory.*;
 
 @SpringBootApplication
 public class ExpenseTrackerApplication implements CommandLineRunner {
@@ -37,29 +39,30 @@ public class ExpenseTrackerApplication implements CommandLineRunner {
         System.out.println(expenseRepository.findAll());
 
         LocalDateTime date1 = LocalDateTime.now();
-        expenseRepository.save(new Expense(ExpenseCategory.FOOD, 100, date1));
-        expenseRepository.save(new Expense(ExpenseCategory.CAFE, 5000, date1));
-        expenseRepository.save(new Expense(ExpenseCategory.CLOTHES, 100, date1));
-        expenseRepository.save(new Expense(ExpenseCategory.FOOD, 100, date1));
-        expenseRepository.save(new Expense(ExpenseCategory.FOOD, 100, date1));
-        expenseRepository.save(new Expense(ExpenseCategory.FOOD, 100, date1));
-        expenseRepository.save(new Expense(ExpenseCategory.APARTMENT, 11000, date1));
-        expenseRepository.save(new Expense(ExpenseCategory.FOOD, 100, date1));
-        expenseRepository.save(new Expense(ExpenseCategory.FOOD, 100, date1));
+        expenseRepository.save(new Expense(FOOD, 100, date1));
+        expenseRepository.save(new Expense(CAFE, 5000, date1));
+        expenseRepository.save(new Expense(CLOTHES, 100, date1));
+        expenseRepository.save(new Expense(FOOD, 500, date1));
+        expenseRepository.save(new Expense(FOOD, 100, date1));
+        expenseRepository.save(new Expense(FOOD, 100, date1));
+        expenseRepository.save(new Expense(APARTMENT, 11000, date1));
+        expenseRepository.save(new Expense(FOOD, 100, date1));
+        expenseRepository.save(new Expense(FOOD, 100, date1));
 
         List<Expense> expenses=new ArrayList<>();
         expenses=expenseRepository.findAll();
 
+        System.out.println(expenseRepository.findById(4L));
 
         System.out.println(expenses);
-        System.out.println(expenseRepository.findAllByCategories());
+        System.out.println(expenseRepository.findAllByCategories(FOOD.toString()));
 
-        List<CategoriesAndPriceInterface> list = expenseRepository.groupByCategories();
+        List<CategoriesAndPrice> list = expenseRepository.groupByCategories();
 
 
-        System.out.println("group by cat:"+ list.get(0).getPrice());
+        System.out.println("Group by category. "+list.get(0).getCategory()+": "+ list.get(0).getPrice());
 
-        //System.out.println(expenseRepository.findCategoriesWithMaxPrice());
+
 
     }
 

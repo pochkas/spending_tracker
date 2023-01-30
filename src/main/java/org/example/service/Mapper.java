@@ -11,12 +11,6 @@ public interface Mapper {
 
     public Expense toExpense(ExpenseCreationDTO expenseDTO);
 
-    public ExpenseDTO addExpense(ExpenseDTO expenseDTO);
 
-    public ExpenseDTO update(ExpenseDTO expenseDTO);
-
-    public Long delete(Long id);
-
-    public Expense getDto(Long id);
 
 }

@@ -44,55 +44,5 @@ public class MapperImpl implements Mapper {
         return new Expense(expenseCreationDTO.getCategories(), expenseCreationDTO.getPrice(), expenseCreationDTO.getDate());
     }
 
-    public List<ExpenseDTO> getAllFine(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2147483647") int size, @RequestParam(defaultValue = "id,asc") String[] sort) {
-
-        return ((List<Expense>) expenseService
-                .findAll(page, size, sort))
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
-
-    }
-
-    public ExpenseDTO addExpense(ExpenseDTO expenseDTO) {
-
-        Expense expenseRequest = modelMapper.map(expenseDTO, Expense.class);
-
-        Expense expense = expenseService.addExpense(expenseRequest);
-
-        expenseRepository.save(expense);
-
-        ExpenseDTO expenseResponse = modelMapper.map(expense, ExpenseDTO.class);
-
-        return expenseResponse;
-
-    }
-
-    public ExpenseDTO update(@RequestBody ExpenseDTO expenseDTO){
-
-        Expense expenseRequest = modelMapper.map(expenseDTO, Expense.class);
-        Expense expense=expenseService.update(expenseRequest);
-        ExpenseDTO expenseResponse=modelMapper.map(expense, ExpenseDTO.class);
-        return expenseResponse;
-
-    }
-
-    public Long delete(@PathVariable Long id){
-        Expense expense=expenseRepository.findById(id).get();
-        if (expense == null) {
-            throw new RuntimeException("Could not find this Expense");
-        }
-        expenseRepository.deleteById(id);
-        return  id;
-    }
-
-    public Expense getDto(@PathVariable Long id){
-        Expense expense=expenseRepository.findById(id).get();
-        if (expense == null) {
-            throw new RuntimeException("Could not find this Expense");
-        }
-        return expenseRepository.findById(id).get();
-    }
-
 
 }

@@ -1,15 +1,10 @@
 package org.example.service;
 
 import org.example.model.Expense;
-import org.example.repository.ExpenseRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.example.model.ExpenseCategory;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ExpenseService {
 
@@ -23,6 +18,8 @@ public interface ExpenseService {
     public Long delete(Long id);
 
     public Expense getExpense(Long id);
+
+    public List<Expense> groupByCategory(ExpenseCategory expenseCategory);
 
 
 }
