@@ -96,7 +96,7 @@ public class ExpenseController {
     @GetMapping(value = "/{expenseCategory}")
     public ResponseEntity getExpenseByCategories(@PathVariable ExpenseCategory expenseCategory) {
         try {
-            return ResponseEntity.ok(expenseRepository.findAllByCategories(expenseCategory.toString()));
+            return ResponseEntity.ok(expenseRepository.findAllByCategory(expenseCategory.toString()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error. Expense has not been found");
         }

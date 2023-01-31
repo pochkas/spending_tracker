@@ -9,12 +9,6 @@ import org.example.service.Mapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class MapperImpl implements Mapper {
@@ -32,7 +26,7 @@ public class MapperImpl implements Mapper {
 
         ExpenseDTO dto = new ExpenseDTO();
 
-        dto.setCategories(expense.getCategories());
+        dto.setCategory(expense.getCategory());
         dto.setPrice(expense.getPrice());
         dto.setDate(expense.getDate());
 
@@ -41,7 +35,7 @@ public class MapperImpl implements Mapper {
 
     @Override
     public Expense toExpense(ExpenseCreationDTO expenseCreationDTO) {
-        return new Expense(expenseCreationDTO.getCategories(), expenseCreationDTO.getPrice(), expenseCreationDTO.getDate());
+        return new Expense(expenseCreationDTO.getCategory(), expenseCreationDTO.getPrice(), expenseCreationDTO.getDate());
     }
 
 

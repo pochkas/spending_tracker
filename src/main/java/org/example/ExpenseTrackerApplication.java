@@ -39,15 +39,15 @@ public class ExpenseTrackerApplication implements CommandLineRunner {
         System.out.println(expenseRepository.findAll());
 
         LocalDateTime date1 = LocalDateTime.now();
-        expenseRepository.save(new Expense(FOOD, 100, date1));
-        expenseRepository.save(new Expense(CAFE, 5000, date1));
-        expenseRepository.save(new Expense(CLOTHES, 100, date1));
-        expenseRepository.save(new Expense(FOOD, 500, date1));
-        expenseRepository.save(new Expense(FOOD, 100, date1));
-        expenseRepository.save(new Expense(FOOD, 100, date1));
-        expenseRepository.save(new Expense(APARTMENT, 11000, date1));
-        expenseRepository.save(new Expense(FOOD, 100, date1));
-        expenseRepository.save(new Expense(FOOD, 100, date1));
+        expenseRepository.insert(FOOD.toString(), 100.0, date1);
+        expenseRepository.insert(CAFE.toString(), 5000.0, date1);
+        expenseRepository.insert(CLOTHES.toString(), 100.0, date1);
+        expenseRepository.insert(FOOD.toString(), 500.0, date1);
+        expenseRepository.insert(FOOD.toString(), 100.0, date1);
+        expenseRepository.insert(FOOD.toString(), 100.0, date1);
+        expenseRepository.insert(APARTMENT.toString(), 11000.0, date1);
+        expenseRepository.insert(FOOD.toString(), 100.0, date1);
+        expenseRepository.insert(FOOD.toString(), 100.0, date1);
 
         List<Expense> expenses=new ArrayList<>();
         expenses=expenseRepository.findAll();
@@ -55,13 +55,21 @@ public class ExpenseTrackerApplication implements CommandLineRunner {
         System.out.println(expenseRepository.findById(4L));
 
         System.out.println(expenses);
-        System.out.println(expenseRepository.findAllByCategories(FOOD.toString()));
+        System.out.println(expenseRepository.findAllByCategory(FOOD.toString()));
 
-        List<CategoriesAndPrice> list = expenseRepository.groupByCategories();
+        List<CategoriesAndPrice> list = expenseRepository.groupByCategory();
 
 
         System.out.println("Group by category. "+list.get(0).getCategory()+": "+ list.get(0).getPrice());
 
+        expenseRepository.deleteExp(1L);
+
+        System.out.println(expenseRepository.findAll());
+
+        expenseRepository.update(2L, OTHER.toString(), 700.0, date1);
+        System.out.println(expenseRepository.findAll());
+        
+        
 
 
     }

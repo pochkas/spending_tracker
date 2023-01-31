@@ -1,6 +1,5 @@
 package org.example.dto;
 
-import jakarta.persistence.*;
 import org.example.model.ExpenseCategory;
 
 import java.time.LocalDateTime;
@@ -8,7 +7,7 @@ import java.time.LocalDateTime;
 
 public class ExpenseDTO {
 
-    private ExpenseCategory categories;
+    private ExpenseCategory category;
 
     private double price;
 
@@ -19,7 +18,7 @@ public class ExpenseDTO {
     @Override
     public String toString() {
         return "ExpenseDTO{" +
-                ", categories=" + categories +
+                ", categories=" + category +
                 ", price=" + price +
                 ", date=" + date +
                 '}';
@@ -28,12 +27,12 @@ public class ExpenseDTO {
 
 
 
-    public ExpenseCategory getCategories() {
-        return categories;
+    public ExpenseCategory getCategory() {
+        return category;
     }
 
-    public void setCategories(ExpenseCategory categories) {
-        this.categories = categories;
+    public void setCategory(ExpenseCategory category) {
+        this.category = category;
     }
 
     public double getPrice() {
@@ -61,6 +60,6 @@ public class ExpenseDTO {
             return false;
         }
         ExpenseDTO ex = (ExpenseDTO) o;
-        return categories.equals(ex.categories) && (Double.compare(getPrice(), ex.getPrice())==0) && getDate().equals(ex.getDate());
+        return category.equals(ex.category) && (Double.compare(getPrice(), ex.getPrice())==0) && getDate().equals(ex.getDate());
     }
 }

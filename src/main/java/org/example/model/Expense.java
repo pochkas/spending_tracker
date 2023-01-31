@@ -19,20 +19,20 @@ public class Expense {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private ExpenseCategory categories;
+    private ExpenseCategory category;
 
     private double price;
 
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime date;
 
-    public Expense(ExpenseCategory categories, double price, LocalDateTime date) {
+    public Expense(ExpenseCategory category, double price, LocalDateTime date) {
 
-        this.categories = categories;
+        this.category = category;
         this.price = price;
         this.date = date;
     }
@@ -42,12 +42,12 @@ public class Expense {
 
 
 
-    public ExpenseCategory getCategories() {
-        return categories;
+    public ExpenseCategory getCategory() {
+        return category;
     }
 
-    public void setCategories(ExpenseCategory categories) {
-        this.categories = categories;
+    public void setCategory(ExpenseCategory category) {
+        this.category = category;
     }
 
     public double getPrice() {
@@ -68,6 +68,6 @@ public class Expense {
 
 
     public String toString() {
-        return getClass().getSimpleName() + ": " +getId()+", "+ getCategories() + ", " + getPrice() + ", " + getDate();
+        return getClass().getSimpleName() + ": " +getId()+", "+ getCategory() + ", " + getPrice() + ", " + getDate();
     }
 }

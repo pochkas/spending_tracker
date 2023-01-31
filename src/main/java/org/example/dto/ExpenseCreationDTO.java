@@ -1,25 +1,23 @@
 package org.example.dto;
 
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import org.example.model.ExpenseCategory;
 
 import java.time.LocalDateTime;
 
 public class ExpenseCreationDTO {
 
-    private ExpenseCategory categories;
+    private ExpenseCategory category;
 
     private double price;
 
     private LocalDateTime date;
 
-    public ExpenseCategory getCategories() {
-        return categories;
+    public ExpenseCategory getCategory() {
+        return category;
     }
 
-    public void setCategories(ExpenseCategory categories) {
-        this.categories = categories;
+    public void setCategory(ExpenseCategory category) {
+        this.category = category;
     }
 
     public double getPrice() {

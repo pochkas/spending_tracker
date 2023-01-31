@@ -2,17 +2,17 @@ package org.example.model;
 
 public enum ExpenseCategory {
 
-    SHOP("Shop"),
-    CLOTHES("Clothes"),
-    FOOD("Food"),
-    CAFE("Cafe"),
-    APARTMENT("Apartment"),
-    INVESTMENT("Investment"),
-    TECHNICS("Technics"),
-    AUTO("Auto"),
-    TRAVEL("Travel"),
-    TRANSPORT("Transport"),
-    OTHER("Other");
+    SHOP("SHOP"),
+    CLOTHES("CLOTHES"),
+    FOOD("FOOD"),
+    CAFE("CAFE"),
+    APARTMENT("APARTMENT"),
+    INVESTMENT("INVESTMENT"),
+    TECHNICS("TECHNICS"),
+    AUTO("AUTO"),
+    TRAVEL("TRAVEL"),
+    TRANSPORT("TRANSPORT"),
+    OTHER("OTHER");
 
     String categoryName;
     ExpenseCategory(String categoryName) {

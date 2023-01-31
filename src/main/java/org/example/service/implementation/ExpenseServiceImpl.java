@@ -81,7 +81,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     public List<Expense> groupByCategory(@PathVariable ExpenseCategory expenseCategory) {
-        return expenseRepository.findAllByCategories(expenseCategory.toString());
+        return expenseRepository.findAllByCategory(expenseCategory.toString());
 
     }
 
