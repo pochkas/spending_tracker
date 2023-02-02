@@ -6,4 +6,5 @@ public interface CategoriesAndPrice {
     String getCategory();
     Double getPrice();
 
+
 }

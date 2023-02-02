@@ -32,6 +32,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     @Query(value = "SELECT category as category, SUM(price) AS price FROM expenses GROUP BY category", nativeQuery = true)
     List<CategoriesAndPrice> groupByCategory();
 
+
     @Query(value = "SELECT * FROM expenses WHERE id=:id",
             nativeQuery = true)
     Optional<Expense> findById(@Param("id") Long id);

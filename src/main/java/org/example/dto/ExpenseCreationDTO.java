@@ -1,5 +1,6 @@
 package org.example.dto;
 
+import org.example.model.Expense;
 import org.example.model.ExpenseCategory;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,12 @@ public class ExpenseCreationDTO {
     private double price;
 
     private LocalDateTime date;
+
+    public ExpenseCreationDTO(ExpenseCategory category, double price, LocalDateTime date) {
+        this.category = category;
+        this.price = price;
+        this.date = date;
+    }
 
     public ExpenseCategory getCategory() {
         return category;
@@ -35,4 +42,10 @@ public class ExpenseCreationDTO {
     public void setDate(LocalDateTime date) {
         this.date = date;
     }
+
+    public Expense toExpense() {
+        return new Expense(getCategory(), getPrice(), getDate());
+    }
+
+
 }

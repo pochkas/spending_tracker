@@ -1,82 +1,76 @@
 package org.example.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.dto.ExpenseCreationDTO;
-import org.example.dto.ExpenseDTO;
 import org.example.model.Expense;
 import org.example.model.ExpenseCategory;
-import org.example.repository.ExpenseRepository;
 import org.example.service.ExpenseService;
-import org.example.service.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping(value = "/expenses")
 public class ExpenseController {
 
 
     @Autowired
-    ExpenseRepository expenseRepository;
-    @Autowired
     private ExpenseService expenseService;
-    @Autowired
-    private Mapper mapper;
-
-    public ExpenseController(ExpenseService expenseService, Mapper mapper) {
-        this.expenseService = expenseService;
-        this.mapper = mapper;
-    }
 
 
     @GetMapping
-    public ResponseEntity findAll(@RequestParam(required = false) String fines, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2147483647") int size, @RequestParam(defaultValue = "fineId,asc") String[] sort) {
+    public ResponseEntity getAll() {
 
         try {
-            return ResponseEntity.ok(expenseService.findAll(page, size, sort));
+            return ResponseEntity.ok(expenseService.getAll());
         } catch (Exception e) {
+            log.error("Error occurred: " + e.getMessage());
             return ResponseEntity.badRequest().body("Error. Expenses have not been found");
         }
 
     }
 
+
     @PostMapping
     public ResponseEntity addExpense(@RequestBody ExpenseCreationDTO expenseDTO) {
         try {
 
-            Expense expenseResponse = mapper.toExpense(expenseDTO);
+
+            Expense expenseResponse = expenseDTO.toExpense();
             Long id = expenseService.addExpense(expenseResponse).getId();
 
             return new ResponseEntity(id, HttpStatus.CREATED);
 
         } catch (Exception e) {
+            log.error("Error occurred: " + e.getMessage());
             return ResponseEntity.badRequest().body("Error. Expense has not been added");
         }
     }
 
-    @PutMapping
-    public ResponseEntity update(@RequestBody ExpenseCreationDTO expenseDTO) {
+    @PutMapping(value = "/{id}")
+    public ResponseEntity update(@PathVariable Long id, @RequestBody ExpenseCreationDTO expenseDTO) {
         try {
+            expenseService.update(id, expenseDTO.getCategory(), expenseDTO.getPrice(), expenseDTO.getDate());
 
-            Expense expenseResponse = mapper.toExpense(expenseDTO);
-            Long id = expenseService.update(expenseResponse).getId();
-
-            return new ResponseEntity(id, HttpStatus.CREATED);
+            return new ResponseEntity(HttpStatus.OK);
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error. Fine has not been updated");
+            log.error("Error occurred: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error. Expense has not been updated");
         }
 
     }
 
-    @DeleteMapping
-    public ResponseEntity delete(@RequestBody Long id) {
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity delete(@PathVariable Long id) {
         try {
             expenseService.delete(id);
             return ResponseEntity.ok("Expense was deleted");
 
         } catch (Exception e) {
+            log.error("Error occurred: " + e.getMessage());
             return ResponseEntity.badRequest().body("Error. Expense was not deleted");
         }
 
@@ -88,17 +82,30 @@ public class ExpenseController {
         try {
             return ResponseEntity.ok(expenseService.getExpense(id));
         } catch (Exception e) {
+            log.error("Error occurred: " + e.getMessage());
             return ResponseEntity.badRequest().body("Error. Expense has not been found");
         }
 
     }
 
-    @GetMapping(value = "/{expenseCategory}")
+    @GetMapping(value = "/byCategory/{expenseCategory}")
     public ResponseEntity getExpenseByCategories(@PathVariable ExpenseCategory expenseCategory) {
         try {
-            return ResponseEntity.ok(expenseRepository.findAllByCategory(expenseCategory.toString()));
+            return ResponseEntity.ok(expenseService.findAllByCategory(expenseCategory));
         } catch (Exception e) {
+            log.error("Error occurred: " + e.getMessage());
             return ResponseEntity.badRequest().body("Error. Expense has not been found");
+        }
+
+    }
+
+    @GetMapping(value = "/groupByCategory")
+    public ResponseEntity groupExpenseByCategories() {
+        try {
+            return ResponseEntity.ok(expenseService.groupByCategory());
+        } catch (Exception e) {
+            log.error("Error occurred: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error. Expenses have not been found");
         }
 
     }
