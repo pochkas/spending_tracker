@@ -2,6 +2,9 @@ package org.example.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.converters.CategoriesAndPrice;
+import org.example.converters.CategoryPriceMonth;
+import org.example.exception.ExpenseException;
+import org.example.exception.UserFacingException;
 import org.example.model.Expense;
 import org.example.model.ExpenseCategory;
 import org.example.service.ExpenseService;
@@ -23,6 +26,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = ExpenseController.class)
 public class ExpenseControllerTest {
@@ -35,7 +39,6 @@ public class ExpenseControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;
-
 
     @Test
     void getAllSuccess() throws Exception {
@@ -170,16 +173,60 @@ public class ExpenseControllerTest {
                         .andExpect(status().isOk());
 
         verify(expenseService, times(1)).delete(id);
+
+
+
+    }
+
+    @Test
+    void groupExpenseByCategoryAndMonthSuccess() throws Exception {
+
+        List<CategoryPriceMonth> list = new ArrayList<>();
+        list.add(new CategoryPriceMonth() {
+            @Override
+            public String getCategory() {
+                return ExpenseCategory.FOOD.toString();
+            }
+
+            @Override
+            public Double getPrice() {
+                return 500.50;
+            }
+
+            @Override
+            public int getMonthDate() {
+                return 11;
+            }
+
+            @Override
+            public int getYearDate() {
+                return 2023;
+            }
+        });
+
+        when(expenseService.groupByCategoryAndMonth()).thenReturn(list);
+
+        mockMvc.perform(get("/expenses/groupByCategoryAndMonth")
+                        .contentType("application/json"))
+                .andExpect(jsonPath("$[0].category").value("FOOD"))
+                .andExpect(jsonPath("$[0].price").value(500.50))
+                .andExpect(jsonPath("$[0].monthDate").value(11))
+                .andExpect(jsonPath("$[0].yearDate").value(2023))
+                .andExpect(status().isOk());
+
+
+        verify(expenseService, times(1)).groupByCategoryAndMonth();
+
     }
 
 
     @Test
     void getAllError() throws Exception {
-
+        when(expenseService.getAll()).thenThrow(new ExpenseException("Error", 1L));
 
         mockMvc.perform(get("/expenses")
                         .contentType("application/json"))
-                .andExpect(status().isExpectationFailed());
+                .andExpect(status().isBadRequest());
 
         verify(expenseService, times(1)).getAll();
     }

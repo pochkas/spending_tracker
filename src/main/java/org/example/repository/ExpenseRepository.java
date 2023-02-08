@@ -2,8 +2,8 @@ package org.example.repository;
 
 import org.example.converters.CategoriesAndPrice;
 
+import org.example.converters.CategoryPriceMonth;
 import org.example.model.Expense;
-import org.example.model.ExpenseCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
@@ -32,15 +32,13 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     @Query(value = "SELECT category as category, SUM(price) AS price FROM expenses GROUP BY category", nativeQuery = true)
     List<CategoriesAndPrice> groupByCategory();
 
-
-    @Query(value = "SELECT * FROM expenses WHERE id=:id",
-            nativeQuery = true)
+    @Query(value = "SELECT * FROM expenses WHERE id=:id", nativeQuery = true)
     Optional<Expense> findById(@Param("id") Long id);
 
     @Modifying
     @Transactional
     @Query(value = "UPDATE expenses SET category=:category, price=:price, date=:date WHERE id=:id", nativeQuery = true)
-    void update(@Param("id") Long id, @Param("category") String category, @Param("price") Double price, @Param("date") LocalDateTime date);
+    int update(@Param("id") Long id, @Param("category") String category, @Param("price") Double price, @Param("date") LocalDateTime date);
 
     @Modifying
     @Transactional
@@ -51,4 +49,11 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     @Transactional
     @Query(value="DELETE FROM expenses WHERE id=:id", nativeQuery = true)
     void deleteExp(@Param("id") Long id);
+
+    @Modifying
+    @Transactional
+    @Query(value="SELECT category as category, SUM(price) AS price, MONTH(date) AS monthDate, YEAR(date) AS yearDate FROM expenses GROUP BY category, YEAR(date), MONTH(date)", nativeQuery = true)
+    List<CategoryPriceMonth> groupByCategoryAndMonth();
+
+
 }

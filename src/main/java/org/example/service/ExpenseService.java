@@ -1,6 +1,7 @@
 package org.example.service;
 
 import org.example.converters.CategoriesAndPrice;
+import org.example.converters.CategoryPriceMonth;
 import org.example.model.Expense;
 import org.example.model.ExpenseCategory;
 
@@ -14,7 +15,7 @@ public interface ExpenseService {
 
     public Expense addExpense(Expense expense);
 
-    public void update(Long id, ExpenseCategory category, Double price, LocalDateTime dateTime);
+    public int update(Long id, ExpenseCategory category, Double price, LocalDateTime dateTime);
 
     public Long delete(Long id);
 
@@ -23,6 +24,8 @@ public interface ExpenseService {
     public List<Expense> findAllByCategory(ExpenseCategory expenseCategory);
 
     public List<CategoriesAndPrice> groupByCategory();
+
+    public List<CategoryPriceMonth> groupByCategoryAndMonth();
 
 
 

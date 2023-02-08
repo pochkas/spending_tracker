@@ -1,6 +1,8 @@
 package org.example.service.implementation;
 
 import org.example.converters.CategoriesAndPrice;
+import org.example.converters.CategoryPriceMonth;
+import org.example.exception.ExpenseException;
 import org.example.model.Expense;
 import org.example.model.ExpenseCategory;
 import org.example.repository.ExpenseRepository;
@@ -43,15 +45,18 @@ public class ExpenseServiceImpl implements ExpenseService {
         return expenseRepository.save(expense);
     }
     @Override
-    public void update(Long id, ExpenseCategory category, Double price, LocalDateTime dateTime) {
-        expenseRepository.update(id, category.toString(), price, dateTime);
-
+    public int update(Long id, ExpenseCategory category, Double price, LocalDateTime dateTime) {
+        int row=expenseRepository.update(id, category.toString(), price, dateTime);
+        if(row==0){
+            throw new ExpenseException("Error, expense was not found.", id);
+        }
+        return row;
     }
     @Override
     public Long delete(Long id) {
         Optional<Expense> expense = expenseRepository.findById(id);
         if (!expense.isPresent()) {
-            throw new RuntimeException("Could not find this Expense");
+            throw new ExpenseException("Could not find this Expense.", id);
         }
         expenseRepository.delete(expense.get());
         return id;
@@ -61,7 +66,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     public Expense getExpense(Long id) {
         Optional<Expense> expense = expenseRepository.findById(id);
         if (!expense.isPresent()) {
-            throw new RuntimeException("Could not find this Expense");
+            throw new ExpenseException("Could not find this Expense.", id);
         }
         return expense.get();
     }
@@ -76,6 +81,9 @@ public class ExpenseServiceImpl implements ExpenseService {
     public List<CategoriesAndPrice> groupByCategory() {
         return expenseRepository.groupByCategory();
     }
+
+    @Override
+    public List<CategoryPriceMonth> groupByCategoryAndMonth(){ return expenseRepository.groupByCategoryAndMonth();}
 
 
 

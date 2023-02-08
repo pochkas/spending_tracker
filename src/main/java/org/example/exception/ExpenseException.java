@@ -1,9 +1,15 @@
 package org.example.exception;
 
-public class ExpenseException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-    public ExpenseException(String message){
-        super(message);
+@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+public class ExpenseException extends UserFacingException {
+
+    public ExpenseException(String message, Long id) {
+        super(message + " Id: " + id);
+
     }
+
 
 }
