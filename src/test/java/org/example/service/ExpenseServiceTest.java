@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -46,14 +47,23 @@ public class ExpenseServiceTest {
     }
 
     @Test
-    public void getByIdSuccess() {
-        Expense expense = expenseRepository.save(new Expense(ExpenseCategory.FOOD, 500.50, LocalDateTime.now()));
+    public void findByIdSuccess() {
+        LocalDateTime date = LocalDateTime.now();
+        Expense expense = expenseRepository.save(new Expense(ExpenseCategory.FOOD, 500.50, date));
+        expense.setId(1L);
+        Expense expense2 = expenseRepository.save(new Expense(ExpenseCategory.FOOD, 500.50, date));
+        expense2.setId(2L);
 
-        List<Expense> foundEntity = expenseRepository.findAll();
-        assertEquals(1, foundEntity.size());
-        expense.setId(5L);
 
-        assertEquals(5L, expense.getId());
+        Optional<Expense> expenseId2 = expenseRepository.findById(2L);
+
+
+        assertEquals(2L, expense2.getId());
+        assertEquals(expenseId2.get().getId(), expense2.getId());
+        assertEquals(expenseId2.get().getCategory().toString(), expense2.getCategory().toString());
+        assertEquals(expenseId2.get().getPrice(), expense2.getPrice());
+        assertEquals(expenseId2.get().getDate(), expense2.getDate());
+
 
 
     }
