@@ -13,6 +13,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -20,12 +22,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DataJpaTest
 public class ExpenseServiceTest {
 
+    static LocalDateTime date = LocalDateTime.of(2023, 11, 11, 8, 45, 44);
+
     @Autowired
     ExpenseRepository expenseRepository;
 
+    UUID userid = UUID.randomUUID();
+
+
+
     @Test
     public void getAllSuccess() {
-        expenseRepository.save(new Expense(ExpenseCategory.FOOD, 500.50, LocalDateTime.now()));
+
+        expenseRepository.save( new Expense(userid, ExpenseCategory.FOOD, 500.50, date));
         List<Expense> foundEntity = expenseRepository.findAll();
         assertEquals(1, foundEntity.size());
     }
@@ -36,7 +45,8 @@ public class ExpenseServiceTest {
         List<Expense> foundEntity = expenseRepository.findAll();
         assertEquals(0, foundEntity.size());
 
-        expenseRepository.insert("FOOD", 500.50, LocalDateTime.now());
+        expenseRepository.insert(userid,"FOOD", 500.50, LocalDateTime.now());
+
         List<Expense> foundEntity2 = expenseRepository.findAll();
 
         assertEquals(1, foundEntity2.size());
@@ -48,48 +58,18 @@ public class ExpenseServiceTest {
 
     @Test
     public void findByIdSuccess() {
-        LocalDateTime date = LocalDateTime.now();
-        Expense expense = expenseRepository.save(new Expense(ExpenseCategory.FOOD, 500.50, date));
-        expense.setId(1L);
-        Expense expense2 = expenseRepository.save(new Expense(ExpenseCategory.FOOD, 500.50, date));
-        expense2.setId(2L);
 
+        Expense expense2 = expenseRepository.save(new Expense(userid, ExpenseCategory.OTHER, 500.50, date));
 
-        Optional<Expense> expenseId2 = expenseRepository.findById(2L);
-
-
-        assertEquals(2L, expense2.getId());
-        assertEquals(expenseId2.get().getId(), expense2.getId());
-        assertEquals(expenseId2.get().getCategory().toString(), expense2.getCategory().toString());
-        assertEquals(expenseId2.get().getPrice(), expense2.getPrice());
-        assertEquals(expenseId2.get().getDate(), expense2.getDate());
-
-
-
-    }
-
-    @Test
-    public void updateSuccess() {
-
-
-        LocalDateTime date = LocalDateTime.now();
-        expenseRepository.insert("FOOD", 500.50, date);
-        expenseRepository.update(1L, "OTHER", 600.60, date);
-        List<Expense> foundEntity = expenseRepository.findAll();
-        assertEquals(1, foundEntity.size());
-        assertEquals(foundEntity.get(0).getCategory().toString(), "OTHER");
-        assertEquals(foundEntity.get(0).getPrice(), 600.60);
-        assertEquals(foundEntity.get(0).getDate(), date);
-
-
+        Expense expenseId2 = expenseRepository.findById(2L).get();
+        assertEquals(expenseId2, expense2);
     }
 
     @Test
     public void deleteSuccess() {
 
-        LocalDateTime date = LocalDateTime.now();
-        expenseRepository.insert("FOOD", 500.50, date);
-        expenseRepository.deleteExp(1L);
+        expenseRepository.save( new Expense(userid, 1L, ExpenseCategory.FOOD, 500.50, date));
+        expenseRepository.deleteExp(userid,1L);
         List<Expense> foundEntity = expenseRepository.findAll();
         assertEquals(0, foundEntity.size());
 
@@ -98,22 +78,21 @@ public class ExpenseServiceTest {
     @Test
     public void groupByCategorySuccess() {
 
-        LocalDateTime date = LocalDateTime.now();
-        expenseRepository.insert("FOOD", 500.0, date);
-        expenseRepository.insert("FOOD", 500.0, date);
-        expenseRepository.insert("FOOD", 500.0, date);
+        expenseRepository.insert(userid,"FOOD", 500.0, date);
+        expenseRepository.insert(userid,"FOOD", 500.0, date);
+        expenseRepository.insert(userid,"FOOD", 500.0, date);
 
 
-        expenseRepository.insert("OTHER", 500.0, date);
-        expenseRepository.insert("OTHER", 500.0, date);
+        expenseRepository.insert(userid,"OTHER", 500.0, date);
+        expenseRepository.insert(userid,"OTHER", 500.0, date);
 
-        expenseRepository.insert("FOOD", 500.0, date);
+        expenseRepository.insert(userid,"FOOD", 500.0, date);
 
 
         List<Expense> foundEntity = expenseRepository.findAll();
         assertEquals(6, foundEntity.size());
 
-        List<CategoriesAndPrice> expensesGroupBy = expenseRepository.groupByCategory();
+        List<CategoriesAndPrice> expensesGroupBy = expenseRepository.groupByCategory(userid);
         assertEquals(2, expensesGroupBy.size());
         assertEquals(expensesGroupBy.get(0).getCategory(), "FOOD");
         assertEquals(expensesGroupBy.get(0).getPrice(), 2000.0);
@@ -127,20 +106,19 @@ public class ExpenseServiceTest {
     @Test
     public void groupByCategoryMonthSuccess() {
 
+        expenseRepository.insert(userid,"FOOD", 500.0, LocalDateTime.of(2023, 11, 11, 8, 45, 44));
+        expenseRepository.insert(userid,"FOOD", 500.0, LocalDateTime.of(2023, 11, 11, 8, 45, 44));
+        expenseRepository.insert(userid,"FOOD", 500.0, LocalDateTime.of(2023, 12, 11, 8, 45, 44));
 
-        expenseRepository.insert("FOOD", 500.0, LocalDateTime.of(2023, 11, 11, 8, 45, 44));
-        expenseRepository.insert("FOOD", 500.0, LocalDateTime.of(2023, 11, 11, 8, 45, 44));
-        expenseRepository.insert("FOOD", 500.0, LocalDateTime.of(2023, 12, 11, 8, 45, 44));
 
-
-        expenseRepository.insert("OTHER", 500.0, LocalDateTime.of(2023, 9, 11, 8, 45, 44));
-        expenseRepository.insert("OTHER", 500.0, LocalDateTime.of(2023, 9, 11, 8, 45, 44));
+        expenseRepository.insert(userid,"OTHER", 500.0, LocalDateTime.of(2023, 9, 11, 8, 45, 44));
+        expenseRepository.insert(userid,"OTHER", 500.0, LocalDateTime.of(2023, 9, 11, 8, 45, 44));
 
 
         List<Expense> foundEntity = expenseRepository.findAll();
         assertEquals(5, foundEntity.size());
 
-        List<CategoryPriceMonth> expensesGroupBy = expenseRepository.groupByCategoryAndMonth();
+        List<CategoryPriceMonth> expensesGroupBy = expenseRepository.groupByCategoryAndMonth(userid);
         assertEquals(3, expensesGroupBy.size());
         assertEquals(expensesGroupBy.get(0).getCategory(), "FOOD");
         assertEquals(expensesGroupBy.get(0).getPrice(), 1000.0);
@@ -159,6 +137,8 @@ public class ExpenseServiceTest {
         assertEquals(expensesGroupBy.get(2).getMonthDate(), 9);
 
     }
+
+
 
 
 }

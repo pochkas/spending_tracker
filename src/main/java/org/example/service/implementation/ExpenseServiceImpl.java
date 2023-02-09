@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -27,34 +28,25 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Autowired
     ExpenseRepository expenseRepository;
 
-    private Sort.Direction getSortDirection(String direction) {
-        if (direction.equals("asc")) {
-            return Sort.Direction.ASC;
-        } else if (direction.equals("desc")) {
-            return Sort.Direction.DESC;
-        }
-
-        return Sort.Direction.ASC;
-    }
     @Override
-    public List<Expense> getAll() {
-        return expenseRepository.findAll();
+    public List<Expense> getAll(UUID userId) {
+        return expenseRepository.findAll(userId);
     }
     @Override
     public Expense addExpense(Expense expense) {
         return expenseRepository.save(expense);
     }
     @Override
-    public int update(Long id, ExpenseCategory category, Double price, LocalDateTime dateTime) {
-        int row=expenseRepository.update(id, category.toString(), price, dateTime);
+    public int update(UUID userId, Long id, ExpenseCategory category, Double price, LocalDateTime dateTime) {
+        int row=expenseRepository.update(userId, id, category.toString(), price, dateTime);
         if(row==0){
             throw new ExpenseException("Error, expense was not found.", id);
         }
         return row;
     }
     @Override
-    public Long delete(Long id) {
-        Optional<Expense> expense = expenseRepository.findById(id);
+    public Long delete(UUID userId, Long id) {
+        Optional<Expense> expense = expenseRepository.findById(userId, id);
         if (!expense.isPresent()) {
             throw new ExpenseException("Could not find this Expense.", id);
         }
@@ -63,8 +55,8 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public Expense getExpense(Long id) {
-        Optional<Expense> expense = expenseRepository.findById(id);
+    public Expense getExpense(UUID userId, Long id) {
+        Optional<Expense> expense = expenseRepository.findById(userId, id);
         if (!expense.isPresent()) {
             throw new ExpenseException("Could not find this Expense.", id);
         }
@@ -72,18 +64,18 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public List<Expense> findAllByCategory(ExpenseCategory expenseCategory) {
-        return expenseRepository.findAllByCategory(expenseCategory.toString());
+    public List<Expense> findAllByCategory(UUID userId ,ExpenseCategory expenseCategory) {
+        return expenseRepository.findAllByCategory(userId, expenseCategory.toString());
 
     }
 
     @Override
-    public List<CategoriesAndPrice> groupByCategory() {
-        return expenseRepository.groupByCategory();
+    public List<CategoriesAndPrice> groupByCategory(UUID userId) {
+        return expenseRepository.groupByCategory(userId);
     }
 
     @Override
-    public List<CategoryPriceMonth> groupByCategoryAndMonth(){ return expenseRepository.groupByCategoryAndMonth();}
+    public List<CategoryPriceMonth> groupByCategoryAndMonth(UUID userId){ return expenseRepository.groupByCategoryAndMonth(userId);}
 
 
 

@@ -8,24 +8,25 @@ import org.example.model.ExpenseCategory;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ExpenseService {
 
-    public List<Expense> getAll();
+    public List<Expense> getAll(UUID userid);
 
     public Expense addExpense(Expense expense);
 
-    public int update(Long id, ExpenseCategory category, Double price, LocalDateTime dateTime);
+    public int update(UUID userid, Long id, ExpenseCategory category, Double price, LocalDateTime dateTime);
 
-    public Long delete(Long id);
+    public Long delete(UUID userid, Long id);
 
-    public Expense getExpense(Long id);
+    public Expense getExpense(UUID userid, Long id);
 
-    public List<Expense> findAllByCategory(ExpenseCategory expenseCategory);
+    public List<Expense> findAllByCategory(UUID userid, ExpenseCategory expenseCategory);
 
-    public List<CategoriesAndPrice> groupByCategory();
+    public List<CategoriesAndPrice> groupByCategory(UUID userid);
 
-    public List<CategoryPriceMonth> groupByCategoryAndMonth();
+    public List<CategoryPriceMonth> groupByCategoryAndMonth(UUID userid);
 
 
 

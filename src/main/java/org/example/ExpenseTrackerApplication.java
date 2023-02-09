@@ -18,23 +18,13 @@ import java.util.List;
 import static org.example.model.ExpenseCategory.*;
 
 @SpringBootApplication
-public class ExpenseTrackerApplication implements CommandLineRunner {
+public class ExpenseTrackerApplication {
 
-//    @Autowired
-//    ExpenseRepository expenseRepository;
 
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
 
     public static void main(String[] args) {
         SpringApplication.run(ExpenseTrackerApplication.class, args);
     }
-
-    @Override
-    public void run(String... args) throws Exception {}
-
 
 
 }

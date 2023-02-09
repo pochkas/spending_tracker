@@ -17,43 +17,44 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
 
-    @Query(value = "SELECT * FROM expenses", nativeQuery = true)
-    List<Expense> findAll();
+    @Query(value = "SELECT * FROM expenses WHERE userid=:userid", nativeQuery = true)
+    List<Expense> findAll(@Param("userid") UUID userid);
 
 
-    @Query(value = "SELECT * FROM expenses WHERE category=:category",  nativeQuery = true)
-    List<Expense> findAllByCategory(@Param("category") String category);
+    @Query(value = "SELECT * FROM expenses WHERE category=:category, WHERE userid=:userid", nativeQuery = true)
+    List<Expense> findAllByCategory(@Param("userid") UUID userid, @Param("category") String category);
 
-    @Query(value = "SELECT category as category, SUM(price) AS price FROM expenses GROUP BY category", nativeQuery = true)
-    List<CategoriesAndPrice> groupByCategory();
+    @Query(value = "SELECT category as category, SUM(price) AS price FROM expenses WHERE userid=:userid GROUP BY category", nativeQuery = true)
+    List<CategoriesAndPrice> groupByCategory(@Param("userid") UUID userid);
 
-    @Query(value = "SELECT * FROM expenses WHERE id=:id", nativeQuery = true)
-    Optional<Expense> findById(@Param("id") Long id);
-
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE expenses SET category=:category, price=:price, date=:date WHERE id=:id", nativeQuery = true)
-    int update(@Param("id") Long id, @Param("category") String category, @Param("price") Double price, @Param("date") LocalDateTime date);
+    @Query(value = "SELECT * FROM expenses WHERE userid=:userid AND id=:id", nativeQuery = true)
+    Optional<Expense> findById(@Param("userid") UUID userid, @Param("id") Long id);
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO expenses (category, price, date) values(:category, :price, :date)", nativeQuery = true)
-    void insert(@Param("category") String category, @Param("price") Double price , @Param("date")LocalDateTime date);
+    @Query(value = "UPDATE expenses SET category=:category, price=:price, date=:date WHERE userid=:userid AND id=:id", nativeQuery = true)
+    int update(@Param("userid") UUID userid, @Param("id") Long id, @Param("category") String category, @Param("price") Double price, @Param("date") LocalDateTime date);
 
     @Modifying
     @Transactional
-    @Query(value="DELETE FROM expenses WHERE id=:id", nativeQuery = true)
-    void deleteExp(@Param("id") Long id);
+    @Query(value = "INSERT INTO expenses (userid, category, price, date) values(:userid, :category, :price, :date)", nativeQuery = true)
+    void insert(@Param("userid") UUID userid, @Param("category") String category, @Param("price") Double price, @Param("date") LocalDateTime date);
 
     @Modifying
     @Transactional
-    @Query(value="SELECT category as category, SUM(price) AS price, MONTH(date) AS monthDate, YEAR(date) AS yearDate FROM expenses GROUP BY category, YEAR(date), MONTH(date)", nativeQuery = true)
-    List<CategoryPriceMonth> groupByCategoryAndMonth();
+    @Query(value = "DELETE FROM expenses WHERE userid=:userid AND id=:id", nativeQuery = true)
+    void deleteExp(@Param("userid") UUID userid, @Param("id") Long id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "SELECT category as category, SUM(price) AS price, MONTH(date) AS monthDate, YEAR(date) AS yearDate FROM expenses WHERE userid=:userid GROUP BY category, YEAR(date), MONTH(date)", nativeQuery = true)
+    List<CategoryPriceMonth> groupByCategoryAndMonth(@Param("userid") UUID userid);
 
 
 }

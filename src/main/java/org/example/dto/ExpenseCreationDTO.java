@@ -4,6 +4,7 @@ import org.example.model.Expense;
 import org.example.model.ExpenseCategory;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class ExpenseCreationDTO {
 
@@ -43,8 +44,8 @@ public class ExpenseCreationDTO {
         this.date = date;
     }
 
-    public Expense toExpense() {
-        return new Expense(getCategory(), getPrice(), getDate());
+    public Expense toExpense(UUID userId) {
+        return new Expense(userId, getCategory(), getPrice(), getDate());
     }
 
 

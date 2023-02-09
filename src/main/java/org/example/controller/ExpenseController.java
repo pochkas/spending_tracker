@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 
 @Slf4j
 @RestController
@@ -24,49 +26,49 @@ public class ExpenseController {
     private ExpenseService expenseService;
 
 
-    @GetMapping
-    public ResponseEntity getAll() {
-        return ResponseEntity.ok(expenseService.getAll());
+    @GetMapping(value = "/{userid}")
+    public ResponseEntity getAll(@PathVariable UUID userid) {
+        return ResponseEntity.ok(expenseService.getAll(userid));
     }
 
 
-    @PostMapping
-    public ResponseEntity addExpense(@RequestBody ExpenseCreationDTO expenseDTO) {
-        Expense expenseResponse = expenseDTO.toExpense();
+    @PostMapping(value = "/{userid}")
+    public ResponseEntity addExpense(@PathVariable UUID userid, @RequestBody ExpenseCreationDTO expenseDTO) {
+        Expense expenseResponse = expenseDTO.toExpense(userid);
         Long id = expenseService.addExpense(expenseResponse).getId();
         return new ResponseEntity(id, HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity update(@PathVariable Long id, @RequestBody ExpenseCreationDTO expenseDTO) {
-        expenseService.update(id, expenseDTO.getCategory(), expenseDTO.getPrice(), expenseDTO.getDate());
+    @PutMapping(value = "/{userid}/{id}")
+    public ResponseEntity update(@PathVariable UUID userid, @PathVariable Long id, @RequestBody ExpenseCreationDTO expenseDTO) {
+        expenseService.update(userid, id, expenseDTO.getCategory(), expenseDTO.getPrice(), expenseDTO.getDate());
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity delete(@PathVariable Long id) {
-        expenseService.delete(id);
+    @DeleteMapping(value = "/{userid}/{id}")
+    public ResponseEntity delete(@PathVariable UUID userid, @PathVariable Long id) {
+        expenseService.delete(userid, id);
         return ResponseEntity.ok("Expense was deleted");
     }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity getExpense(@PathVariable Long id) {
-        return ResponseEntity.ok(expenseService.getExpense(id));
+    @GetMapping(value = "/{userid}/{id}")
+    public ResponseEntity getExpense(@PathVariable UUID userid, @PathVariable Long id) {
+        return ResponseEntity.ok(expenseService.getExpense(userid, id));
     }
 
-    @GetMapping(value = "/byCategory/{expenseCategory}")
-    public ResponseEntity getExpenseByCategories(@PathVariable ExpenseCategory expenseCategory) {
-        return ResponseEntity.ok(expenseService.findAllByCategory(expenseCategory));
+    @GetMapping(value = "/{userid}/byCategory/{expenseCategory}")
+    public ResponseEntity getExpenseByCategories(@PathVariable UUID userid, @PathVariable ExpenseCategory expenseCategory) {
+        return ResponseEntity.ok(expenseService.findAllByCategory(userid, expenseCategory));
     }
 
-    @GetMapping(value = "/groupByCategory")
-    public ResponseEntity groupExpenseByCategories() {
-        return ResponseEntity.ok(expenseService.groupByCategory());
+    @GetMapping(value = "/{userid}/groupByCategory")
+    public ResponseEntity groupExpenseByCategories(@PathVariable UUID userid) {
+        return ResponseEntity.ok(expenseService.groupByCategory(userid));
     }
 
-    @GetMapping(value = "/groupByCategoryAndMonth")
-    public ResponseEntity groupExpenseByCategoryAndMonth() {
-        return ResponseEntity.ok(expenseService.groupByCategoryAndMonth());
+    @GetMapping(value = "/{userid}/groupByCategoryAndMonth")
+    public ResponseEntity groupExpenseByCategoryAndMonth(@PathVariable UUID userid) {
+        return ResponseEntity.ok(expenseService.groupByCategoryAndMonth(userid));
     }
 
 

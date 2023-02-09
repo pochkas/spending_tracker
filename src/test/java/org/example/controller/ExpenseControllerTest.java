@@ -3,14 +3,14 @@ package org.example.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.converters.CategoriesAndPrice;
 import org.example.converters.CategoryPriceMonth;
+import org.example.dto.ExpenseCreationDTO;
+import org.example.dto.ExpenseDTO;
 import org.example.exception.ExpenseException;
-import org.example.exception.UserFacingException;
 import org.example.model.Expense;
 import org.example.model.ExpenseCategory;
 import org.example.service.ExpenseService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -40,31 +41,35 @@ public class ExpenseControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    UUID userid = UUID.randomUUID();
+
     @Test
     void getAllSuccess() throws Exception {
 
 
-        mockMvc.perform(get("/expenses")
+        mockMvc.perform(get("/expenses/{userid}", userid)
                         .contentType("application/json"))
                 .andExpect(status().isOk());
 
-        verify(expenseService, times(1)).getAll();
+        verify(expenseService, times(1)).getAll(userid);
     }
 
     @Test
     void addSuccess() throws Exception {
 
+
         LocalDateTime dateTime = LocalDateTime.now();
-        Expense expense = new Expense(ExpenseCategory.APARTMENT, 500.50, dateTime);
+        ExpenseCreationDTO expense = new ExpenseCreationDTO(ExpenseCategory.APARTMENT, 500.50, dateTime);
+        Expense exp = new Expense(userid, ExpenseCategory.APARTMENT, 500.50, dateTime);
 
-        when(expenseService.addExpense(eq(new Expense(ExpenseCategory.APARTMENT, 500.50, dateTime)))).thenReturn(expense);
+        when(expenseService.addExpense(eq(exp))).thenReturn(exp);
 
-        mockMvc.perform(post("/expenses")
+        mockMvc.perform(post("/expenses/{userid}", userid)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(expense)))
                 .andExpect(status().isCreated());
 
-        verify(expenseService, times(1)).addExpense(expense);
+        verify(expenseService, times(1)).addExpense(exp);
     }
 
     @Test
@@ -72,13 +77,13 @@ public class ExpenseControllerTest {
 
         Long id = 1L;
         LocalDateTime dateTime = LocalDateTime.now();
-        Expense expense = new Expense(ExpenseCategory.APARTMENT, 500.50, dateTime);
+        Expense expense = new Expense(userid, ExpenseCategory.APARTMENT, 500.50, dateTime);
         expense.setId(1L);
 
 
-        when(expenseService.getExpense(eq(id))).thenReturn(expense);
+        when(expenseService.getExpense(eq(userid), eq(id))).thenReturn(expense);
 
-        mockMvc.perform(get("/expenses/{id}", 1L)
+        mockMvc.perform(get("/expenses/{userid}/{id}", userid, 1L)
                         .contentType("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
@@ -86,7 +91,7 @@ public class ExpenseControllerTest {
                 .andExpect(jsonPath("$.price").value(500.50))
                 .andExpect(jsonPath("$.date").value(dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
 
-        verify(expenseService, times(1)).getExpense(id);
+        verify(expenseService, times(1)).getExpense(userid, id);
 
     }
 
@@ -95,20 +100,20 @@ public class ExpenseControllerTest {
 
         ExpenseCategory category = ExpenseCategory.FOOD;
         LocalDateTime dateTime = LocalDateTime.now();
-        Expense expense = new Expense(ExpenseCategory.FOOD, 500.50, dateTime);
+        Expense expense = new Expense(userid, ExpenseCategory.FOOD, 500.50, dateTime);
         List<Expense> list = new ArrayList<>();
         list.add(expense);
 
-        when(expenseService.findAllByCategory(eq(category))).thenReturn(list);
+        when(expenseService.findAllByCategory(eq(userid), eq(category))).thenReturn(list);
 
-        mockMvc.perform(get("/expenses/byCategory/{expenseCategory}", ExpenseCategory.FOOD)
+        mockMvc.perform(get("/expenses/{userid}/byCategory/{expenseCategory}", userid, ExpenseCategory.FOOD)
                         .contentType("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].category").value(category.toString()))
                 .andExpect(jsonPath("$[0].price").value(500.50))
                 .andExpect(jsonPath("$[0].date").value(dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
 
-        verify(expenseService, times(1)).findAllByCategory(category);
+        verify(expenseService, times(1)).findAllByCategory(userid, category);
 
     }
 
@@ -128,33 +133,33 @@ public class ExpenseControllerTest {
             }
         });
 
-        when(expenseService.groupByCategory()).thenReturn(list);
+        when(expenseService.groupByCategory(userid)).thenReturn(list);
 
-        mockMvc.perform(get("/expenses/groupByCategory")
+        mockMvc.perform(get("/expenses/{userid}/groupByCategory", userid)
                         .contentType("application/json"))
                 .andExpect(jsonPath("$[0].category").value("FOOD"))
                 .andExpect(jsonPath("$[0].price").value(500.50))
                 .andExpect(status().isOk());
 
 
-        verify(expenseService, times(1)).groupByCategory();
+        verify(expenseService, times(1)).groupByCategory(userid);
 
     }
 
     @Test
     void updateSuccess() throws Exception {
 
-        Expense expense = new Expense(ExpenseCategory.FOOD, 500.50, null);
+        Expense expense = new Expense(userid, ExpenseCategory.FOOD, 500.50, null);
         expense.setId(1L);
 
-        doNothing().when(expenseService).update(eq(1l), eq(ExpenseCategory.FOOD), eq(500.50), eq(null));
+        when(expenseService.update(eq(userid), eq(1L), eq(ExpenseCategory.FOOD), eq(500.50), eq(null))).thenReturn(1);
 
-        mockMvc.perform(put("/expenses/{id}", 1L)
+        mockMvc.perform(put("/expenses/{userid}/{id}", userid, 1L)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(expense)))
-                        .andExpect(status().isOk());
+                .andExpect(status().isOk());
 
-        verify(expenseService, times(1)).update(1L, ExpenseCategory.FOOD, 500.50, null);
+        verify(expenseService, times(1)).update(userid, 1L, ExpenseCategory.FOOD, 500.50, null);
 
     }
 
@@ -162,18 +167,17 @@ public class ExpenseControllerTest {
     void deleteSuccess() throws Exception {
 
         LocalDateTime dateTime = LocalDateTime.now();
-        Expense expense = new Expense(ExpenseCategory.APARTMENT, 500.50, dateTime);
+        Expense expense = new Expense(userid, ExpenseCategory.APARTMENT, 500.50, dateTime);
         expense.setId(1L);
         Long id = 1L;
 
-        when(expenseService.delete(eq(id))).thenReturn(id);
+        when(expenseService.delete(eq(userid), eq(id))).thenReturn(id);
 
-        mockMvc.perform(delete("/expenses/{id}", 1L)
+        mockMvc.perform(delete("/expenses/{userid}/{id}", userid, 1L)
                         .contentType("application/json"))
-                        .andExpect(status().isOk());
+                .andExpect(status().isOk());
 
-        verify(expenseService, times(1)).delete(id);
-
+        verify(expenseService, times(1)).delete(userid, id);
 
 
     }
@@ -204,9 +208,9 @@ public class ExpenseControllerTest {
             }
         });
 
-        when(expenseService.groupByCategoryAndMonth()).thenReturn(list);
+        when(expenseService.groupByCategoryAndMonth(userid)).thenReturn(list);
 
-        mockMvc.perform(get("/expenses/groupByCategoryAndMonth")
+        mockMvc.perform(get("/expenses/{userid}/groupByCategoryAndMonth", userid)
                         .contentType("application/json"))
                 .andExpect(jsonPath("$[0].category").value("FOOD"))
                 .andExpect(jsonPath("$[0].price").value(500.50))
@@ -215,19 +219,19 @@ public class ExpenseControllerTest {
                 .andExpect(status().isOk());
 
 
-        verify(expenseService, times(1)).groupByCategoryAndMonth();
+        verify(expenseService, times(1)).groupByCategoryAndMonth(userid);
 
     }
 
 
     @Test
     void getAllError() throws Exception {
-        when(expenseService.getAll()).thenThrow(new ExpenseException("Error", 1L));
+        when(expenseService.getAll(userid)).thenThrow(new ExpenseException("Error", 1L));
 
-        mockMvc.perform(get("/expenses")
+        mockMvc.perform(get("/expenses/{userid}", userid)
                         .contentType("application/json"))
                 .andExpect(status().isBadRequest());
 
-        verify(expenseService, times(1)).getAll();
+        verify(expenseService, times(1)).getAll(userid);
     }
 }
