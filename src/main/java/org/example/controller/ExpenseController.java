@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -27,7 +28,7 @@ public class ExpenseController {
 
 
     @GetMapping(value = "/{userid}")
-    public ResponseEntity getAll(@PathVariable UUID userid) {
+    public ResponseEntity<List<Expense>> getAll(@PathVariable UUID userid) {
         return ResponseEntity.ok(expenseService.getAll(userid));
     }
 
