@@ -20,6 +20,10 @@ public class ExpenseCreationDTO {
         this.date = date;
     }
 
+    public ExpenseCreationDTO(){
+
+    }
+
     public ExpenseCategory getCategory() {
         return category;
     }

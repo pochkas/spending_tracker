@@ -13,7 +13,15 @@ public class ExpenseDTO {
 
     private LocalDateTime date;
 
+    public ExpenseDTO(ExpenseCategory category, double price, LocalDateTime date) {
+        this.category = category;
+        this.price = price;
+        this.date = date;
+    }
 
+    public ExpenseDTO(){
+
+    }
 
     @Override
     public String toString() {
@@ -23,9 +31,6 @@ public class ExpenseDTO {
                 ", date=" + date +
                 '}';
     }
-
-
-
 
     public ExpenseCategory getCategory() {
         return category;
