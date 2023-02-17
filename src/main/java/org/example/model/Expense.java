@@ -3,7 +3,10 @@ package org.example.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import org.example.dto.ExpenseDTO;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 
 import java.time.LocalDateTime;
@@ -52,6 +55,9 @@ public class Expense {
         this.userid = userid;
         this.category = category;
         this.price = price;
+        if(date==null){
+            date=LocalDateTime.now();
+        }
         this.date = date;
     }
 

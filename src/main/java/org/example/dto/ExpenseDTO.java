@@ -3,6 +3,7 @@ package org.example.dto;
 import org.example.model.ExpenseCategory;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 
 public class ExpenseDTO {
@@ -13,7 +14,7 @@ public class ExpenseDTO {
 
     private LocalDateTime date;
 
-    public ExpenseDTO(ExpenseCategory category, double price, LocalDateTime date) {
+    public ExpenseDTO(UUID userid, ExpenseCategory category, double price, LocalDateTime date) {
         this.category = category;
         this.price = price;
         this.date = date;

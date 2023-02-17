@@ -29,7 +29,14 @@ public class ExpenseServiceTest {
 
     UUID userid = UUID.randomUUID();
 
+    @Test
+    public void findByIdSuccess() {
 
+        Expense expense2 = expenseRepository.save(new Expense(userid, ExpenseCategory.OTHER, 500.50, date));
+
+        Expense expenseId2 = expenseRepository.findById(expense2.getId()).get();
+        assertEquals(expenseId2, expense2);
+    }
 
     @Test
     public void getAllSuccess() {
@@ -56,14 +63,7 @@ public class ExpenseServiceTest {
 
     }
 
-    @Test
-    public void findByIdSuccess() {
 
-        Expense expense2 = expenseRepository.save(new Expense(userid, ExpenseCategory.OTHER, 500.50, date));
-
-        Expense expenseId2 = expenseRepository.findById(2L).get();
-        assertEquals(expenseId2, expense2);
-    }
 
     @Test
     public void deleteSuccess() {
@@ -99,6 +99,33 @@ public class ExpenseServiceTest {
 
         assertEquals(expensesGroupBy.get(1).getCategory(), "OTHER");
         assertEquals(expensesGroupBy.get(1).getPrice(), 1000.0);
+
+
+    }
+
+    @Test
+    public void getByCategory() {
+
+        expenseRepository.insert(userid,"FOOD", 500.0, date);
+        expenseRepository.insert(userid,"FOOD", 600.0, date);
+        expenseRepository.insert(userid,"FOOD", 500.0, date);
+
+
+        expenseRepository.insert(userid,"OTHER", 500.0, date);
+        expenseRepository.insert(userid,"OTHER", 500.0, date);
+
+        expenseRepository.insert(userid,"FOOD", 500.0, date);
+
+
+        List<Expense> foundEntity = expenseRepository.findAll();
+        assertEquals(6, foundEntity.size());
+
+        List<Expense> expensesGetByCategory = expenseRepository.findAllByCategory(userid, "FOOD");
+        assertEquals(4, expensesGetByCategory.size());
+        assertEquals(expensesGetByCategory.get(0).getCategory().toString(), "FOOD");
+        assertEquals(expensesGetByCategory.get(0).getPrice(), 500.0);
+
+
 
 
     }

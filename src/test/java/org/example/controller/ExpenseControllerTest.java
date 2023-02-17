@@ -149,8 +149,8 @@ public class ExpenseControllerTest {
     @Test
     void updateSuccess() throws Exception {
 
-        Expense expense = new Expense(userid, ExpenseCategory.FOOD, 500.50, null);
-        expense.setId(1L);
+        ExpenseDTO expense = new ExpenseDTO(userid, ExpenseCategory.FOOD, 500.50, null);
+
 
         when(expenseService.update(eq(userid), eq(1L), eq(ExpenseCategory.FOOD), eq(500.50), eq(null))).thenReturn(1);
 

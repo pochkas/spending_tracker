@@ -27,7 +27,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     List<Expense> findAll(@Param("userid") UUID userid);
 
 
-    @Query(value = "SELECT * FROM expenses WHERE category=:category, WHERE userid=:userid", nativeQuery = true)
+    @Query(value = "SELECT * FROM expenses WHERE category=:category AND userid=:userid", nativeQuery = true)
     List<Expense> findAllByCategory(@Param("userid") UUID userid, @Param("category") String category);
 
     @Query(value = "SELECT category as category, SUM(price) AS price FROM expenses WHERE userid=:userid GROUP BY category", nativeQuery = true)
@@ -53,7 +53,8 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "SELECT category as category, SUM(price) AS price, MONTH(date) AS monthDate, YEAR(date) AS yearDate FROM expenses WHERE userid=:userid GROUP BY category, YEAR(date), MONTH(date)", nativeQuery = true)
+    @Query(value = "SELECT category as category, SUM(price) AS price, extract(month from date) as monthDate, extract(year from date) as yearDate, count(*) as count " +
+            "FROM expenses WHERE userid=:userid GROUP BY category, monthDate, yearDate", nativeQuery = true)
     List<CategoryPriceMonth> groupByCategoryAndMonth(@Param("userid") UUID userid);
 
 
