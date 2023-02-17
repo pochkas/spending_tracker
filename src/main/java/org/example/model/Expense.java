@@ -55,9 +55,6 @@ public class Expense {
         this.userid = userid;
         this.category = category;
         this.price = price;
-        if(date==null){
-            date=LocalDateTime.now();
-        }
         this.date = date;
     }
 

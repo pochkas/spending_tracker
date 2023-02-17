@@ -4,6 +4,7 @@ import org.example.model.Expense;
 import org.example.model.ExpenseCategory;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 public class ExpenseCreationDTO {
@@ -12,9 +13,9 @@ public class ExpenseCreationDTO {
 
     private double price;
 
-    private LocalDateTime date;
+    private Optional<LocalDateTime> date;
 
-    public ExpenseCreationDTO(ExpenseCategory category, double price, LocalDateTime date) {
+    public ExpenseCreationDTO(ExpenseCategory category, double price, Optional<LocalDateTime> date) {
         this.category = category;
         this.price = price;
         this.date = date;
@@ -40,16 +41,16 @@ public class ExpenseCreationDTO {
         this.price = price;
     }
 
-    public LocalDateTime getDate() {
+    public Optional<LocalDateTime> getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(Optional<LocalDateTime> date) {
         this.date = date;
     }
 
     public Expense toExpense(UUID userId) {
-        return new Expense(userId, getCategory(), getPrice(), getDate());
+        return new Expense(userId, getCategory(), getPrice(), getDate().orElse(LocalDateTime.now()));
     }
 
 

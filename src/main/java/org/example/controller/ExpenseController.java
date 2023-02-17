@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,7 +43,7 @@ public class ExpenseController {
 
     @PutMapping(value = "/{userid}/{id}")
     public ResponseEntity update(@PathVariable UUID userid, @PathVariable Long id, @RequestBody ExpenseCreationDTO expenseDTO) {
-        expenseService.update(userid, id, expenseDTO.getCategory(), expenseDTO.getPrice(), expenseDTO.getDate());
+        expenseService.update(userid, id, expenseDTO.getCategory(), expenseDTO.getPrice(), expenseDTO.getDate().orElse(LocalDateTime.now()));
         return new ResponseEntity(HttpStatus.OK);
     }
 

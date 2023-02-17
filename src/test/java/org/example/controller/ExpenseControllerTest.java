@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.Mockito.*;
@@ -59,7 +60,7 @@ public class ExpenseControllerTest {
 
 
         LocalDateTime dateTime = LocalDateTime.now();
-        ExpenseCreationDTO expense = new ExpenseCreationDTO(ExpenseCategory.APARTMENT, 500.50, dateTime);
+        ExpenseCreationDTO expense = new ExpenseCreationDTO(ExpenseCategory.APARTMENT, 500.50, Optional.of(dateTime));
         Expense exp = new Expense(userid, ExpenseCategory.APARTMENT, 500.50, dateTime);
 
         when(expenseService.addExpense(eq(exp))).thenReturn(exp);
@@ -149,17 +150,19 @@ public class ExpenseControllerTest {
     @Test
     void updateSuccess() throws Exception {
 
-        ExpenseDTO expense = new ExpenseDTO(userid, ExpenseCategory.FOOD, 500.50, null);
+        LocalDateTime date=LocalDateTime.now();
+
+        ExpenseDTO expense = new ExpenseDTO(userid, ExpenseCategory.FOOD, 500.50, date);
 
 
-        when(expenseService.update(eq(userid), eq(1L), eq(ExpenseCategory.FOOD), eq(500.50), eq(null))).thenReturn(1);
+        when(expenseService.update(eq(userid), eq(1L), eq(ExpenseCategory.FOOD), eq(500.50), eq(date))).thenReturn(1);
 
         mockMvc.perform(put("/expenses/{userid}/{id}", userid, 1L)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(expense)))
                 .andExpect(status().isOk());
 
-        verify(expenseService, times(1)).update(userid, 1L, ExpenseCategory.FOOD, 500.50, null);
+        verify(expenseService, times(1)).update(userid, 1L, ExpenseCategory.FOOD, 500.50, date);
 
     }
 
