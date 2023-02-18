@@ -60,7 +60,7 @@ public class ExpenseControllerTest {
 
 
         LocalDateTime dateTime = LocalDateTime.now();
-        ExpenseCreationDTO expense = new ExpenseCreationDTO(ExpenseCategory.APARTMENT, 500.50, Optional.of(dateTime));
+        ExpenseCreationDTO expense = new ExpenseCreationDTO(ExpenseCategory.APARTMENT, 500.50, dateTime);
         Expense exp = new Expense(userid, ExpenseCategory.APARTMENT, 500.50, dateTime);
 
         when(expenseService.addExpense(eq(exp))).thenReturn(exp);

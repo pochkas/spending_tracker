@@ -11,6 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -56,6 +57,7 @@ public class Expense {
         this.category = category;
         this.price = price;
         this.date = date;
+
     }
 
     public Expense(Long id, ExpenseCategory category, double price, LocalDateTime date) {

@@ -43,7 +43,7 @@ public class ExpenseController {
 
     @PutMapping(value = "/{userid}/{id}")
     public ResponseEntity update(@PathVariable UUID userid, @PathVariable Long id, @RequestBody ExpenseCreationDTO expenseDTO) {
-        expenseService.update(userid, id, expenseDTO.getCategory(), expenseDTO.getPrice(), expenseDTO.getDate().orElse(LocalDateTime.now()));
+        expenseService.update(userid, id, expenseDTO.getCategory(), expenseDTO.getPrice(), expenseDTO.getDate());
         return new ResponseEntity(HttpStatus.OK);
     }
 

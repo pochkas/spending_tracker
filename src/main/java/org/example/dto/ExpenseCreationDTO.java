@@ -13,9 +13,9 @@ public class ExpenseCreationDTO {
 
     private double price;
 
-    private Optional<LocalDateTime> date;
+    private LocalDateTime date;
 
-    public ExpenseCreationDTO(ExpenseCategory category, double price, Optional<LocalDateTime> date) {
+    public ExpenseCreationDTO(ExpenseCategory category, double price, LocalDateTime date) {
         this.category = category;
         this.price = price;
         this.date = date;
@@ -41,16 +41,16 @@ public class ExpenseCreationDTO {
         this.price = price;
     }
 
-    public Optional<LocalDateTime> getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Optional<LocalDateTime> date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
     public Expense toExpense(UUID userId) {
-        return new Expense(userId, getCategory(), getPrice(), getDate().orElse(LocalDateTime.now()));
+        return new Expense(userId, getCategory(), getPrice(), getDate());
     }
 
 
