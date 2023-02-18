@@ -201,12 +201,12 @@ public class ExpenseControllerTest {
             }
 
             @Override
-            public int getMonthDate() {
+            public Integer getMonthDate() {
                 return 11;
             }
 
             @Override
-            public int getYearDate() {
+            public Integer getYearDate() {
                 return 2023;
             }
         });

@@ -11,7 +11,7 @@ public interface CategoryPriceMonth {
 
     Double getPrice();
 
-    int getMonthDate();
+    Integer getMonthDate();
 
-    int getYearDate();
+    Integer getYearDate();
 }
